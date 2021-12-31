@@ -109,6 +109,14 @@ extraSOURCES += aiori-Gfarm.c
 extraLDADD += -lgfarm
 endif
 
+if USE_GRAMFS_AIORI
+extraSOURCES += aiori-GRAMFS.c
+extraLDADD   += -lgflags -lglog -lboost_system -lboost_serialization
+extraLDADD   += -lpthread -lthrift -lkyotocabinet -lrocksdb
+extraLDFLAGS += -L/opt/gramfs/lib
+extraLDADD   += -lgramfs-devel
+endif
+
 if USE_S3_4C_AIORI
 extraSOURCES  += aiori-S3-4c.c
 if AWS4C_DIR

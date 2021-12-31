@@ -1,0 +1,39 @@
+Building
+----------------------
+
+The gramfs-devel library must be installed on the system.
+
+./bootstrap
+./configure --prefix=iorInstallDir --with-daos=DIR
+
+The GRAMFS (Graph Module File System) driver creates an encapsulated namespace and emulates
+the POSIX driver using the DFS API directly on top of DAOS. The DFS driver works
+with both IOR and mdtest.
+
+Running
+---------------------
+
+ior -a GRAMFS [ior_options] [gramfs_options]
+mdtest -a GRAMFS [mdtest_options] [gramfs_options]
+
+
+Optional Options:
+--gramfs.conf <path>: absolute path of rpc configure file for GRAMFS client, default: /etc/gramfs/gramfs-rpc.conf
+--gramfs.prefix <path>: mount path of the file system, default: /mnt/gramfs/
+
+If prefix is not set, in the IOR options, the file name should be specified on
+the root dir directly since ior does not create directories and the DFS
+container representing the encapsulated namespace is not the same as the system
+namespace the user is executing from.
+
+Examples that should work include:
+  - "ior -a GRAMFS -w -W -o /test1 --gramfs.conf=/etc/gramfs/gramfs-rpc.conf"
+  - "ior -a GRAMFS -w -W -r -R -o /test2 -b 1g -t 4m -C --gramfs.conf=/etc/gramfs/gramfs-rpc.conf"
+  - "ior -a GRAMFS -w -r -o /test3 -b 8g -t 1m -C --gramfs.conf=/etc/gramfs/gramfs-rpc.conf"
+
+Running mdtest, the user needs to specify a directory with -d where the test
+tree will be created (set '/' if writing to the root of the GRAMFS). Some
+examples:
+  - "mdtest -a GRAMFS -n 100 -F -D -d / --gramfs.conf=/etc/gramfs/gramfs-rpc.conf"
+  - "mdtest -a GRAMFS -n 1000 -F -C -d / --gramfs.conf=/etc/gramfs/gramfs-rpc.conf"
+  - "mdtest -a GRAMFS -I 10 -z 5 -b 2 -L -d / --gramfs.conf=/etc/gramfs/gramfs-rpc.conf"

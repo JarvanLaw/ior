@@ -330,6 +330,21 @@ if test x$with_gfarm != xno; then
   AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec])
 fi
 
+# GRAMFS support
+AC_ARG_WITH([gramfs],
+        [AS_HELP_STRING([--with-gramfs],
+           [support IO with gramfs backend @<:@default=no@:>@])],
+        [],
+        [with_gramfs=yes])
+AS_IF([test "x$with_gramfs" != xno], [
+       CPPFLAGS="$CPPFLAGS -D_FILE_OFFSET_BITS=64 -std=gnu11"
+       LDFLAGS="$LDFLAGS -Wl,-rpath=/opt/grafms/lib -lgramfs-devel -lrocksdb"
+])
+AM_CONDITIONAL([USE_GRAMFS_AIORI], [test x$with_gramfs = xyes])
+AM_COND_IF([USE_GRAMFS_AIORI],[
+        AC_DEFINE([USE_GRAMFS_AIORI], [], [Build GRAMFS backend AIORI])
+])
+
 # aws4c is needed for the S3 backend (see --with-S3, below).
 # Version 0.5.2 of aws4c is available at https://github.com/jti-lanl/aws4c.git
 # Install it something like this:
